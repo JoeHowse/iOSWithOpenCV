@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>labelDescriptions</key>
+	<array>
+		<string>unidentified</string>
+		<string>Canadian penny</string>
+		<string>Canadian nickel</string>
+		<string>Canadian dime</string>
+		<string>Canadian quarter</string>
+		<string>loonie, Canadian dollar</string>
+		<string>toonie, Canadian two-dollar</string>
+		<string>pinto bean</string>
+		<string>romano bean</string>
+	</array>
+	<key>blobs</key>
+	<array>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianNickel_Heads_000.png</string>
+			<key>label</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianNickel_Tails_000.png</string>
+			<key>label</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianDime_Heads_000.png</string>
+			<key>label</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianDime_Tails_000.png</string>
+			<key>label</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianQuarter_Heads_000.png</string>
+			<key>label</key>
+			<integer>4</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>CanadianQuarter_Tails_000.png</string>
+			<key>label</key>
+			<integer>4</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>Loonie_Heads_000.png</string>
+			<key>label</key>
+			<integer>5</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>Loonie_Tails_000.png</string>
+			<key>label</key>
+			<integer>5</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>Toonie_Heads_000.png</string>
+			<key>label</key>
+			<integer>6</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>Toonie_Tails_000.png</string>
+			<key>label</key>
+			<integer>6</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>PintoBean_000.png</string>
+			<key>label</key>
+			<integer>7</integer>
+		</dict>
+		<dict>
+			<key>imageFilename</key>
+			<string>RomanoBean_000.png</string>
+			<key>label</key>
+			<integer>8</integer>
+		</dict>
+	</array>
+</dict>
+</plist>

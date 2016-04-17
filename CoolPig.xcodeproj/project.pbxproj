@@ -294,7 +294,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = CoolPig/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nummist.CoolPig;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -314,7 +314,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = WITH_OPENCV_CONTRIB;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "";
 				INFOPLIST_FILE = CoolPig/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nummist.CoolPig;
 				PRODUCT_NAME = "$(TARGET_NAME)";

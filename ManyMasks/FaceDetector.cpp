@@ -18,15 +18,15 @@
 #endif
 
 const double DETECT_HUMAN_FACE_SCALE_FACTOR = 1.4;
-const double DETECT_HUMAN_FACE_MIN_NEIGHBORS = 4;
+const int DETECT_HUMAN_FACE_MIN_NEIGHBORS = 4;
 const int DETECT_HUMAN_FACE_RELATIVE_MIN_SIZE_IN_IMAGE = 0.25;
 
 const double DETECT_HUMAN_EYE_SCALE_FACTOR = 1.2;
-const double DETECT_HUMAN_EYE_MIN_NEIGHBORS = 2;
+const int DETECT_HUMAN_EYE_MIN_NEIGHBORS = 2;
 const int DETECT_HUMAN_EYE_RELATIVE_MIN_SIZE_IN_FACE = 0.1;
 
 const double DETECT_CAT_FACE_SCALE_FACTOR = 1.4;
-const double DETECT_CAT_FACE_MIN_NEIGHBORS = 6;
+const int DETECT_CAT_FACE_MIN_NEIGHBORS = 6;
 const int DETECT_CAT_FACE_RELATIVE_MIN_SIZE_IN_IMAGE = 0.2;
 
 const double ESTIMATE_HUMAN_EYE_CENTER_RELATIVE_X_IN_EYE = 0.5;
@@ -64,29 +64,26 @@ FaceDetector::FaceDetector(const std::string &humanFaceCascadePath, const std::s
 {
 }
 
-void FaceDetector::detect(const cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw)
+void FaceDetector::detect(cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw)
 {
     faces.clear();
     
-    if (resizeFactor == 1.0)
-    {
+    if (resizeFactor == 1.0) {
         equalize(image);
-    }
-    else
-    {
+    } else {
         cv::resize(image, resizedImage, cv::Size(), resizeFactor, resizeFactor, cv::INTER_AREA);
         equalize(resizedImage);
     }
     
     // Detect human faces.
     std::vector<cv::Rect> humanFaceRects;
-    int detectHumanFaceMinWidth = image.cols * DETECT_HUMAN_FACE_RELATIVE_MIN_SIZE_IN_IMAGE;
+    int detectHumanFaceMinWidth = MIN(image.cols, image.rows) * DETECT_HUMAN_FACE_RELATIVE_MIN_SIZE_IN_IMAGE;
     cv::Size detectHumanFaceMinSize(detectHumanFaceMinWidth, detectHumanFaceMinWidth);
     humanFaceClassifier.detectMultiScale(equalizedImage, humanFaceRects, DETECT_HUMAN_FACE_SCALE_FACTOR, DETECT_HUMAN_FACE_MIN_NEIGHBORS, 0, detectHumanFaceMinSize);
     
     // Detect cat faces.
     std::vector<cv::Rect> catFaceRects;
-    int detectCatFaceMinWidth = image.cols * DETECT_CAT_FACE_RELATIVE_MIN_SIZE_IN_IMAGE;
+    int detectCatFaceMinWidth = MIN(image.cols, image.rows) * DETECT_CAT_FACE_RELATIVE_MIN_SIZE_IN_IMAGE;
     cv::Size detectCatFaceMinSize(detectCatFaceMinWidth, detectCatFaceMinWidth);
     catFaceClassifier.detectMultiScale(equalizedImage, catFaceRects, DETECT_CAT_FACE_SCALE_FACTOR, DETECT_CAT_FACE_MIN_NEIGHBORS, 0, detectCatFaceMinSize);
     
@@ -107,8 +104,7 @@ void FaceDetector::detect(const cv::Mat &image, std::vector<Face> &faces, double
     }
 }
 
-void FaceDetector::equalize(const cv::Mat &image)
-{
+void FaceDetector::equalize(const cv::Mat &image) {
     switch (image.channels()) {
         case 4:
             cv::cvtColor(image, equalizedImage, cv::COLOR_BGRA2GRAY);
@@ -125,7 +121,7 @@ void FaceDetector::equalize(const cv::Mat &image)
     }
 }
 
-void FaceDetector::detectInnerComponents(const cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw, Species species, cv::Rect faceRect)
+void FaceDetector::detectInnerComponents(cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw, Species species, cv::Rect faceRect)
 {
     cv::Range rowRange(faceRect.y, faceRect.y + faceRect.height);
     cv::Range colRange(faceRect.x, faceRect.x + faceRect.width);

@@ -144,9 +144,9 @@
 				D8F6FAEE1C8CA40A007072C0 /* FaceDetector.cpp */,
 				D86DD8791C94542E000D54ED /* GeomUtils.h */,
 				D86DD87A1C9455AF000D54ED /* GeomUtils.cpp */,
-				D80CF8B01C8B8C1A008C4053 /* Species.h */,
 				D836FBC11C94BC8E00552AB4 /* ReviewViewController.h */,
 				D836FBBF1C94BC5E00552AB4 /* ReviewViewController.m */,
+				D80CF8B01C8B8C1A008C4053 /* Species.h */,
 				D836FBBC1C94BB2000552AB4 /* VideoCamera.h */,
 				D836FBBD1C94BB2000552AB4 /* VideoCamera.m */,
 				D8BCDDB91C8B268E00A92DA1 /* Main.storyboard */,
@@ -381,7 +381,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ManyMasks/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nummist.ManyMasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -399,7 +399,7 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PREPROCESSOR_DEFINITIONS = WITH_OPENCV_CONTRIB;
 				INFOPLIST_FILE = ManyMasks/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nummist.ManyMasks;
 				PRODUCT_NAME = "$(TARGET_NAME)";

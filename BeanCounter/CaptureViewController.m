@@ -1,8 +1,8 @@
 //
 //  CaptureViewController.m
-//  ManyMasks
+//  BeanCounter
 //
-//  Created by Joseph Howse on 2016-03-05.
+//  Created by Joseph Howse on 2016-04-08.
 //  Copyright © 2016 Nummist Media Corporation Limited. All rights reserved.
 //
 
@@ -11,40 +11,34 @@
 #import <opencv2/imgproc.hpp>
 
 #import "CaptureViewController.h"
-#import "FaceDetector.h"
+#import "BlobClassifier.h"
+#import "BlobDetector.h"
 #import "ReviewViewController.h"
 #import "VideoCamera.h"
 
 const double DETECT_RESIZE_FACTOR = 0.5;
 
 @interface CaptureViewController () <CvVideoCameraDelegate> {
-    FaceDetector *faceDetector;
-    std::vector<Face> detectedFaces;
-    Face bestDetectedFace;
-    Face faceToMerge0;
-    Face faceToMerge1;
+    BlobClassifier *blobClassifier;
+    BlobDetector *blobDetector;
+    std::vector<Blob> detectedBlobs;
+    Blob bestDetectedBlob;
 }
 
 @property IBOutlet UIView *backgroundView;
-
-@property IBOutlet UIBarButtonItem *face0Button;
-@property IBOutlet UIBarButtonItem *face1Button;
-@property IBOutlet UIBarButtonItem *mergeButton;
-
-@property IBOutlet UIImageView *face0ImageView;
-@property IBOutlet UIImageView *face1ImageView;
+@property IBOutlet UIBarButtonItem *classifyButton;
 
 @property VideoCamera *videoCamera;
+@property BOOL showMask;
+
+@property NSArray<NSString *> *labelDescriptions;
 
 - (IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture;
-- (IBAction)onColorModeSelected:(UISegmentedControl *)segmentedControl;
+- (IBAction)onPreviewModeSelected:(UISegmentedControl *)segmentedControl;
 - (IBAction)onSwitchCameraButtonPressed;
-- (IBAction)onFace0ButtonPressed;
-- (IBAction)onFace1ButtonPressed;
 
 - (void)refresh;
 - (void)processImage:(cv::Mat &)mat;
-- (void)showFace:(Face &)face inImageView:(UIImageView *)imageView;
 - (UIImage *)imageFromCapturedMat:(const cv::Mat &)mat;
 
 @end
@@ -54,27 +48,40 @@ const double DETECT_RESIZE_FACTOR = 0.5;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    if (faceDetector == NULL) {
-        
-        NSBundle *bundle = [NSBundle mainBundle];
-        
-        std::string humanFaceCascadePath = [[bundle pathForResource:@"haarcascade_frontalface_alt" ofType:@"xml"] UTF8String];
-        std::string catFaceCascadePath = [[bundle pathForResource:@"haarcascade_frontalcatface_extended" ofType:@"xml"] UTF8String];
-        std::string leftEyeCascadePath = [[bundle pathForResource:@"haarcascade_lefteye_2splits" ofType:@"xml"] UTF8String];
-        std::string rightEyeCascadePath = [[bundle pathForResource:@"haarcascade_righteye_2splits" ofType:@"xml"] UTF8String];
-        
-        faceDetector = new FaceDetector(humanFaceCascadePath, catFaceCascadePath, leftEyeCascadePath, rightEyeCascadePath);
-    }
+    blobDetector = new BlobDetector();
+    blobClassifier = new BlobClassifier();
     
-    self.face0Button.enabled = NO;
-    self.face1Button.enabled = NO;
-    self.mergeButton.enabled = (!faceToMerge0.isEmpty() && !faceToMerge1.isEmpty());
+    // Load the blob classifier's configuration from file.
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSString *configPath = [bundle pathForResource:@"BlobClassifierTraining" ofType:@"plist"];
+    NSDictionary *config = [NSDictionary dictionaryWithContentsOfFile:configPath];
+    
+    // Remember the descriptions of the blob labels.
+    self.labelDescriptions = config[@"labelDescriptions"];
+    
+    // Create reference blobs and train the blob classifier.
+    NSArray *configBlobs = config[@"blobs"];
+    for (NSDictionary *configBlob in configBlobs) {
+        uint32_t label = [configBlob[@"label"] unsignedIntValue];
+        NSString *imageFilename = configBlob[@"imageFilename"];
+        UIImage *image = [UIImage imageNamed:imageFilename];
+        if (image == nil) {
+            NSLog(@"Image not found in resources: %@", imageFilename);
+            continue;
+        }
+        cv::Mat mat;
+        UIImageToMat(image, mat);
+        cv::cvtColor(mat, mat, cv::COLOR_RGB2BGR);
+        Blob blob(mat, label);
+        blobClassifier->update(blob);
+    }
     
     self.videoCamera = [[VideoCamera alloc] initWithParentView:self.backgroundView];
     self.videoCamera.delegate = self;
     self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetHigh;
     self.videoCamera.defaultFPS = 30;
     self.videoCamera.letterboxPreview = YES;
+    self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionBack;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -101,24 +108,33 @@ const double DETECT_RESIZE_FACTOR = 0.5;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showReviewModally"]) {
         ReviewViewController *reviewViewController = segue.destinationViewController;
-        Face mergedFace(faceToMerge0, faceToMerge1);
-        reviewViewController.image = [self imageFromCapturedMat:mergedFace.getMat()];
+        blobClassifier->classify(bestDetectedBlob);
+        reviewViewController.image = [self imageFromCapturedMat:bestDetectedBlob.getMat()];
+        reviewViewController.caption = self.labelDescriptions[bestDetectedBlob.getLabel()];
     }
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
-    if (faceDetector != NULL) {
-        delete faceDetector;
-        faceDetector = NULL;
+    if (blobClassifier != NULL) {
+        delete blobClassifier;
+        blobClassifier = NULL;
+    }
+    if (blobDetector != NULL) {
+        delete blobDetector;
+        blobDetector = NULL;
     }
 }
 
 - (void)dealloc {
-    if (faceDetector != NULL) {
-        delete faceDetector;
-        faceDetector = NULL;
+    if (blobClassifier != NULL) {
+        delete blobClassifier;
+        blobClassifier = NULL;
+    }
+    if (blobDetector != NULL) {
+        delete blobDetector;
+        blobDetector = NULL;
     }
 }
 
@@ -129,13 +145,13 @@ const double DETECT_RESIZE_FACTOR = 0.5;
     }
 }
 
-- (IBAction)onColorModeSelected:(UISegmentedControl *)segmentedControl {
+- (IBAction)onPreviewModeSelected:(UISegmentedControl *)segmentedControl {
     switch (segmentedControl.selectedSegmentIndex) {
         case 0:
-            self.videoCamera.grayscaleMode = NO;
+            self.showMask = NO;
             break;
         default:
-            self.videoCamera.grayscaleMode = YES;
+            self.showMask = YES;
             break;
     }
     [self refresh];
@@ -154,26 +170,6 @@ const double DETECT_RESIZE_FACTOR = 0.5;
     [self refresh];
 }
 
-- (IBAction)onFace0ButtonPressed {
-    faceToMerge0 = bestDetectedFace;
-    [self showFace:faceToMerge0 inImageView:self.face0ImageView];
-    if (!faceToMerge1.isEmpty()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.mergeButton.enabled = YES;
-        });
-    }
-}
-
-- (IBAction)onFace1ButtonPressed {
-    faceToMerge1 = bestDetectedFace;
-    [self showFace:faceToMerge1 inImageView:self.face1ImageView];
-    if (!faceToMerge0.isEmpty()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.mergeButton.enabled = YES;
-        });
-    }
-}
-
 - (void)refresh {
     // Start or restart the video.
     [self.videoCamera stop];
@@ -181,7 +177,7 @@ const double DETECT_RESIZE_FACTOR = 0.5;
 }
 
 - (void)processImage:(cv::Mat &)mat {
-
+    
     switch (self.videoCamera.defaultAVCaptureVideoOrientation) {
         case AVCaptureVideoOrientationLandscapeLeft:
         case AVCaptureVideoOrientationLandscapeRight:
@@ -193,23 +189,31 @@ const double DETECT_RESIZE_FACTOR = 0.5;
             break;
     }
     
-    // Detect and draw any faces.
-    faceDetector->detect(mat, detectedFaces, DETECT_RESIZE_FACTOR, true);
+    // Detect and draw any blobs.
+    blobDetector->detect(mat, detectedBlobs, DETECT_RESIZE_FACTOR, true);
     
-    BOOL didDetectFaces = (detectedFaces.size() > 0);
+    BOOL didDetectBlobs = (detectedBlobs.size() > 0);
     
-    if (didDetectFaces) {
-        bestDetectedFace = detectedFaces[0];
+    if (didDetectBlobs) {
+        int biggestBlobIndex = 0;
+        for (int i = 0, biggestBlobArea = 0; i < detectedBlobs.size(); i++) {
+            Blob &detectedBlob = detectedBlobs[i];
+            int blobArea = detectedBlob.getWidth() * detectedBlob.getHeight();
+            if (blobArea > biggestBlobArea) {
+                biggestBlobIndex = i;
+                biggestBlobArea = blobArea;
+            }
+        }
+        bestDetectedBlob = detectedBlobs[biggestBlobIndex];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.face0Button.enabled = didDetectFaces;
-        self.face1Button.enabled = didDetectFaces;
+        self.classifyButton.enabled = didDetectBlobs;
     });
-}
-
-- (void)showFace:(Face &)face inImageView:(UIImageView *)imageView {
-    imageView.image = [self imageFromCapturedMat:face.getMat()];
+    
+    if (self.showMask) {
+        blobDetector->getMask().copyTo(mat);
+    }
 }
 
 - (UIImage *)imageFromCapturedMat:(const cv::Mat &)mat {

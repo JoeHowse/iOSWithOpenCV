@@ -18,11 +18,11 @@ class FaceDetector {
 public:
     FaceDetector(const std::string &humanFaceCascadePath, const std::string &catFaceCascadePath, const std::string &humanLeftEyeCascadePath, const std::string &humanRightEyeCascadePath);
     
-    void detect(const cv::Mat &image, std::vector<Face> &faces, double resizeFactor = 1.0, bool draw = false);
+    void detect(cv::Mat &image, std::vector<Face> &faces, double resizeFactor = 1.0, bool draw = false);
     
 private:
     void equalize(const cv::Mat &image);
-    void detectInnerComponents(const cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw, Species species, cv::Rect faceRect);
+    void detectInnerComponents(cv::Mat &image, std::vector<Face> &faces, double resizeFactor, bool draw, Species species, cv::Rect faceRect);
     
     cv::CascadeClassifier humanFaceClassifier;
     cv::CascadeClassifier catFaceClassifier;

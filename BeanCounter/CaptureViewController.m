@@ -22,7 +22,6 @@ const double DETECT_RESIZE_FACTOR = 0.5;
     BlobClassifier *blobClassifier;
     BlobDetector *blobDetector;
     std::vector<Blob> detectedBlobs;
-    Blob bestDetectedBlob;
 }
 
 @property IBOutlet UIView *backgroundView;
@@ -108,9 +107,26 @@ const double DETECT_RESIZE_FACTOR = 0.5;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showReviewModally"]) {
         ReviewViewController *reviewViewController = segue.destinationViewController;
-        blobClassifier->classify(bestDetectedBlob);
-        reviewViewController.image = [self imageFromCapturedMat:bestDetectedBlob.getMat()];
-        reviewViewController.caption = self.labelDescriptions[bestDetectedBlob.getLabel()];
+        
+        // Stop the camera to prevent conflicting access to the blobs.
+        [self.videoCamera stop];
+        
+        // Find the biggest blob.
+        int biggestBlobIndex = 0;
+        for (int i = 0, biggestBlobArea = 0; i < detectedBlobs.size(); i++) {
+            Blob &detectedBlob = detectedBlobs[i];
+            int blobArea = detectedBlob.getWidth() * detectedBlob.getHeight();
+            if (blobArea > biggestBlobArea) {
+                biggestBlobIndex = i;
+                biggestBlobArea = blobArea;
+            }
+        }
+        Blob &biggestBlob = detectedBlobs[biggestBlobIndex];
+        
+        // Classify the blob and show the result in the destination view controller.
+        blobClassifier->classify(biggestBlob);
+        reviewViewController.image = [self imageFromCapturedMat:biggestBlob.getMat()];
+        reviewViewController.caption = self.labelDescriptions[biggestBlob.getLabel()];
     }
 }
 
@@ -193,20 +209,6 @@ const double DETECT_RESIZE_FACTOR = 0.5;
     blobDetector->detect(mat, detectedBlobs, DETECT_RESIZE_FACTOR, true);
     
     BOOL didDetectBlobs = (detectedBlobs.size() > 0);
-    
-    if (didDetectBlobs) {
-        int biggestBlobIndex = 0;
-        for (int i = 0, biggestBlobArea = 0; i < detectedBlobs.size(); i++) {
-            Blob &detectedBlob = detectedBlobs[i];
-            int blobArea = detectedBlob.getWidth() * detectedBlob.getHeight();
-            if (blobArea > biggestBlobArea) {
-                biggestBlobIndex = i;
-                biggestBlobArea = blobArea;
-            }
-        }
-        bestDetectedBlob = detectedBlobs[biggestBlobIndex];
-    }
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         self.classifyButton.enabled = didDetectBlobs;
     });

@@ -275,9 +275,15 @@ enum BlendMode {
         // Apply any mode-dependent operations to the blending source.
         switch (self.blendMode) {
             case Screen:
+                /* Pseudocode:
+                 convertedBlendSrcMat = 255 – convertedBlendSrcMat;
+                 */
                 cv::subtract(255.0, convertedBlendSrcMat, convertedBlendSrcMat);
                 break;
             case HUD:
+                /* Pseudocode:
+                 convertedBlendSrcMat = 255 – Laplacian(GaussianBlur(convertedBlendSrcMat));
+                 */
                 cv::GaussianBlur(convertedBlendSrcMat, convertedBlendSrcMat, cv::Size(5, 5), 0.0);
                 cv::Laplacian(convertedBlendSrcMat, convertedBlendSrcMat, -1, 3);
                 if (!self.videoCamera.grayscaleMode) {
@@ -297,13 +303,22 @@ enum BlendMode {
     // Combine the blending source and the current frame.
     switch (self.blendMode) {
         case Average:
+            /* Pseudocode:
+             mat = 0.5 * mat + 0.5 * convertedBlendSrcMat;
+             */
             cv::addWeighted(mat, 0.5, convertedBlendSrcMat, 0.5, 0.0, mat);
             break;
         case Multiply:
+            /* Pseudocode:
+             mat = mat * convertedBlendSrcMat / 255;
+             */
             cv::multiply(mat, convertedBlendSrcMat, mat, 1.0 / 255.0);
             break;
         case Screen:
         case HUD:
+            /* Pseudocode:
+             mat = 255 – (255 – mat) * convertedBlendSrcMat / 255;
+             */
             cv::subtract(255.0, mat, mat);
             cv::multiply(mat, convertedBlendSrcMat, mat, 1.0 / 255.0);
             cv::subtract(255.0, mat, mat);

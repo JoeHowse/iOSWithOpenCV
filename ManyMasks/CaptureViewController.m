@@ -224,7 +224,17 @@ const double DETECT_RESIZE_FACTOR = 0.5;
     BOOL didDetectFaces = (detectedFaces.size() > 0);
     
     if (didDetectFaces) {
-        bestDetectedFace = detectedFaces[0];
+        // Find the biggest face.
+        int bestFaceIndex = 0;
+        for (int i = 0, bestFaceArea = 0; i < detectedFaces.size(); i++) {
+            Face &detectedFace = detectedFaces[i];
+            int faceArea = detectedFace.getWidth() * detectedFace.getHeight();
+            if (faceArea > bestFaceArea) {
+                bestFaceIndex = i;
+                bestFaceArea = faceArea;
+            }
+        }
+        bestDetectedFace = detectedFaces[bestFaceIndex];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{

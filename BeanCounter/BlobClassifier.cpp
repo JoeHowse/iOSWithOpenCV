@@ -45,14 +45,16 @@ const int HISTOGRAM_COMPARISON_METHOD = cv::HISTCMP_CHISQR_ALT;
 const float HISTOGRAM_DISTANCE_WEIGHT = 0.98f;
 const float KEYPOINT_MATCHING_DISTANCE_WEIGHT = 1.0f - HISTOGRAM_DISTANCE_WEIGHT;
 
-BlobClassifier::BlobClassifier() {
+BlobClassifier::BlobClassifier()
+: clahe(cv::createCLAHE())
 #ifdef WITH_OPENCV_CONTRIB
-    featureDetectorAndDescriptorExtractor = cv::xfeatures2d::SURF::create();
-    descriptorMatcher = cv::DescriptorMatcher::create("FlannBased");
+, featureDetectorAndDescriptorExtractor(cv::xfeatures2d::SURF::create())
+, descriptorMatcher(cv::DescriptorMatcher::create("FlannBased"))
 #else
-    featureDetectorAndDescriptorExtractor = cv::ORB::create();
-    descriptorMatcher = cv::DescriptorMatcher::create("BruteForce-HammingLUT");
+, featureDetectorAndDescriptorExtractor(cv::ORB::create())
+, descriptorMatcher(cv::DescriptorMatcher::create("BruteForce-HammingLUT"))
 #endif
+{
 }
 
 void BlobClassifier::update(const Blob &referenceBlob) {
@@ -103,6 +105,9 @@ BlobDescriptor BlobClassifier::createBlobDescriptor(const Blob &blob) const {
             cv::cvtColor(mat, grayMat, cv::COLOR_BGR2GRAY);
             break;
     }
+    
+    // Adaptively equalize the grayscale image to enhance local contrast.
+    clahe->apply(grayMat, grayMat);
     
     // Detect features in the grayscale image.
     std::vector<cv::KeyPoint> keypoints;

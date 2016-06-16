@@ -64,6 +64,11 @@ private:
     float findDistance(const BlobDescriptor &detectedBlobDescriptor, const BlobDescriptor &referenceBlobDescriptor) const;
     
     /**
+     * An adaptive equalizer to enhance local contrast.
+     */
+    cv::Ptr<cv::CLAHE> clahe;
+    
+    /**
      * A feature detector and descriptor extractor.
      * It finds features in images.
      * Then, it creates descriptors of the features.

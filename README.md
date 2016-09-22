@@ -1,6 +1,6 @@
 # iOSWithOpenCV
 
-These are the projects for my upcoming book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv).
+These are the projects for my book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv). For full details, please read the book along with the [Errata and Updates](ERRATA.md) page.
 
 ## Getting started
 

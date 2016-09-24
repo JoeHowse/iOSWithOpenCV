@@ -29,6 +29,7 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
+		<string>video-camera</string>
 	</array>
 	<key>UIRequiresFullScreen</key>
 	<true/>

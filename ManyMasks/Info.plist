@@ -50,5 +50,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>ManyMasks uses the camera to detect faces and take photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ManyMasks uses the photo library to save photos.</string>
 </dict>
 </plist>

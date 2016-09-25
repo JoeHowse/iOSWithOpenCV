@@ -50,5 +50,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>LightWork uses the camera to take photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>LightWork uses the photo library to save photos.</string>
 </dict>
 </plist>

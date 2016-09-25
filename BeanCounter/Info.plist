@@ -50,5 +50,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>BeanCounter uses the camera to detect objects and take photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>BeanCounter uses the photo library to save photos.</string>
 </dict>
 </plist>

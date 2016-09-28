@@ -529,13 +529,20 @@ enum BlendMode {
     }
     cv::resize(subMat, convertedBlendSrcMat, cv::Size(dstW, dstH), 0.0, 0.0, cv::INTER_LANCZOS4);
     
-    int cvtColorCode;
-    if (self.videoCamera.grayscaleMode) {
-        cvtColorCode = cv::COLOR_RGBA2GRAY;
-    } else {
-        cvtColorCode = cv::COLOR_RGBA2BGRA;
+    switch (convertedBlendSrcMat.channels()) {
+        case 1:
+            if (!self.videoCamera.grayscaleMode) {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_GRAY2BGRA);
+            }
+            break;
+        default:
+            if (self.videoCamera.grayscaleMode) {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2GRAY);
+            } else {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2BGRA);
+            }
+            break;
     }
-    cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cvtColorCode);
 }
 
 @end

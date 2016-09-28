@@ -1,6 +1,6 @@
 # Errata and Updates
 
-Here are the errata and updates for my book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv).
+Here are the errata and updates for my book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv). Where applicable, revisions have been applied to the source files in this repository.
 
 ## Additional `Info.plist` entries to support iOS 10+
 
@@ -39,4 +39,25 @@ A set of closing tokens (`}];`) is missing from the code at the top of the page.
     }];
   return action;
 }
+```
+
+## Page 96: Color conversion
+
+At the end of the code excerpt, the color conversion logic fails to cover the cases where the source is already grayscale. The following code is corrected:
+
+```
+  switch (convertedBlendSrcMat.channels()) {
+    case 1:
+      if (!self.videoCamera.grayscaleMode) {
+        cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_GRAY2BGRA);
+      }
+      break;
+    default:
+      if (self.videoCamera.grayscaleMode) {
+        cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2GRAY);
+      } else {
+        cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2BGRA);
+      }
+      break;
+  }
 ```

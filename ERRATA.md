@@ -61,3 +61,25 @@ At the end of the code excerpt, the color conversion logic fails to cover the ca
       break;
   }
 ```
+
+## Page 123: Redundant `if` statement
+
+The line `if (didDetectFaces) {` and the matching closing brace are mistakenly duplicated on this page. The following code is corrected to remove the redundancy:
+
+```
+  BOOL didDetectFaces = (detectedFaces.size() > 0);
+  
+  if (didDetectFaces) {
+    // Find the biggest face.
+    int bestFaceIndex = 0;
+    for (int i = 0, bestFaceArea = 0; i < detectedFaces.size(); i++) {
+      Face &detectedFace = detectedFaces[i];
+      int faceArea = detectedFace.getWidth() * detectedFace.getHeight();
+      if (faceArea > bestFaceArea) {
+        bestFaceIndex = i;
+        bestFaceArea = faceArea;
+      }
+    }
+    bestDetectedFace = detectedFaces[bestFaceIndex];
+  }
+```

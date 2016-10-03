@@ -62,6 +62,17 @@ At the end of the code excerpt, the color conversion logic fails to cover the ca
   }
 ```
 
+## Page 119-124: Changes in `refresh` method
+
+Generally, these pages cover the changes in the `CaptureViewController` class between the old LightWork project and the new ManyMasks project. However, the book omits the changes in the `refresh` method's implementation. The following code is the correct implementation for ManyMasks:
+
+```
+- (void)refresh {
+  [self.videoCamera stop];
+  [self.videoCamera start];
+}
+```
+
 ## Page 123: Redundant `if` statement
 
 The line `if (didDetectFaces) {` and the matching closing brace are mistakenly duplicated on this page. The following code is corrected to remove the redundancy:

@@ -2,6 +2,10 @@
 
 Here are the errata and updates for my book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv). Where applicable, revisions have been applied to the source files in this repository.
 
+## Project configuration in Xcode 8+
+
+Since Xcode 8, new projects are configured by default to use the `-Wdocumentation` compiler flag. This means that the compiler raises warnings if the comments do not follow certain formatting conventions. OpenCV's headers contain many irregularly formatted comments, so you probably want to disable this flag to prevent a flood of unhelpful warnings. To disable it, go to the project's **Build Settings** pane, find the **Apple LLVM 8.0 - Warnings - All languages** section, and set the **Documentation Comments** entry to **No**.
+
 ## Additional `Info.plist` entries to support iOS 10+
 
 Since iOS 10, if an app uses the camera and photo library, the `Info.plist` file must contain the `NSCameraUsageDescription` and `NSPhotoLibraryDescription` keys to describe the way the app uses these features. This new requirement affects the projects in Chapters 2-5. See the latest versions of the `Info.plist` files in this repository.

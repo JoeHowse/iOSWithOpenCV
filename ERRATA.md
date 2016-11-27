@@ -22,6 +22,33 @@ $ chmod +x <opencv_source_path>/platforms/ios/build_framework.py
 
 When `build_framework.py` works properly, it prints either `** INSTALL SUCCEEDED **` or `** BUILD SUCCEEDED **`, depending on the version.
 
+## Page 24-25: New white balance API in `opencv_contrib`
+
+The white balance API in `opencv_contrib` [changed on August 9, 2016](https://github.com/opencv/opencv_contrib/commit/75dedf9e589b1833d92b6bd644f64ae225795c96). The following code is updated to use the new API:
+
+```
+    case CV_8UC4: {
+      // The cv::Mat is in RGBA format.
+      // Convert it to RGB format.
+      cv::cvtColor(originalMat, originalMat, cv::COLOR_RGBA2RGB);
+#ifdef WITH_OPENCV_CONTRIB
+      // Adjust the white balance.
+      cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+      whiteBalancer->balanceWhite(originalMat, originalMat);
+#endif
+      break;
+    }
+    case CV_8UC3: {
+      // The cv::Mat is in RGB format.
+#ifdef WITH_OPENCV_CONTRIB
+      // Adjust the white balance.
+      cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+      whiteBalancer->balanceWhite(originalMat, originalMat);
+#endif
+      break;
+    }
+```
+
 ## Page 26: Mouse actions to connect an outlet
 
 The paragraph beneath the heading "Connecting an interface element to the code" gives an incorrect description of the mouse actions. The following text is corrected:

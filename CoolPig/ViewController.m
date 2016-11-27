@@ -81,7 +81,7 @@
             cv::cvtColor(originalMat, originalMat, cv::COLOR_RGBA2RGB);
 #ifdef WITH_OPENCV_CONTRIB
             // Adjust the white balance.
-            cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+            cv::Ptr<cv::xphoto::GrayworldWB> whiteBalancer = cv::xphoto::createGrayworldWB();
             whiteBalancer->balanceWhite(originalMat, originalMat);
 #endif
             break;
@@ -90,7 +90,7 @@
             // The cv::Mat is in RGB format.
 #ifdef WITH_OPENCV_CONTRIB
             // Adjust the white balance.
-            cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+            cv::Ptr<cv::xphoto::GrayworldWB> whiteBalancer = cv::xphoto::createGrayworldWB();
             whiteBalancer->balanceWhite(originalMat, originalMat);
 #endif
             break;

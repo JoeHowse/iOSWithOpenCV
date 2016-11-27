@@ -75,22 +75,26 @@
             // Convert it to RGB format.
             cv::cvtColor(originalMat, originalMat, cv::COLOR_GRAY2RGB);
             break;
-        case CV_8UC4:
+        case CV_8UC4: {
             // The cv::Mat is in RGBA format.
             // Convert it to RGB format.
             cv::cvtColor(originalMat, originalMat, cv::COLOR_RGBA2RGB);
 #ifdef WITH_OPENCV_CONTRIB
             // Adjust the white balance.
-            cv::xphoto::autowbGrayworld(originalMat, originalMat);
+            cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+            whiteBalancer->balanceWhite(originalMat, originalMat);
 #endif
             break;
-        case CV_8UC3:
+        }
+        case CV_8UC3: {
             // The cv::Mat is in RGB format.
 #ifdef WITH_OPENCV_CONTRIB
             // Adjust the white balance.
-            cv::xphoto::autowbGrayworld(originalMat, originalMat);
+            cv::Ptr<cv::xphoto::SimpleWB> whiteBalancer = cv::xphoto::createSimpleWB();
+            whiteBalancer->balanceWhite(originalMat, originalMat);
 #endif
             break;
+        }
         default:
             break;
     }

@@ -101,6 +101,22 @@
     
     // Call an update method every 2 seconds.
     self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
+    
+    // Get a notification center and queue.
+    // These will provide notifications about application lifecycle events.
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    NSOperationQueue *queue = [NSOperationQueue mainQueue];
+    
+    // When the application enters the background, stop the update timer.
+    [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:queue usingBlock:^(NSNotification *note) {
+        [self.timer invalidate];
+        self.timer = nil;
+    }];
+    
+    // When the application re-enters the foreground, re-start the update timer.
+    [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:queue usingBlock:^(NSNotification *note) {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
+    }];
 }
 
 - (void)updateImage {

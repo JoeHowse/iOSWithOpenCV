@@ -49,6 +49,31 @@ The white balance API in `opencv_contrib` [changed on August 9, 2016](https://gi
     }
 ```
 
+## Page 25: Repeating timer must be stopped
+
+When an `NSTimer` is set up to fire on a repeating basis, it must be explicitly stopped. The following code is corrected to stop the timer when the application enters the background and restart the timer when the application enters the foreground.
+
+```
+  // Call an update method every 2 seconds.
+  self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
+  
+  // Get a notification center and queue.
+  // These will provide notifications about application lifecycle events.
+  NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+  NSOperationQueue *queue = [NSOperationQueue mainQueue];
+  
+  // When the application enters the background, stop the update timer.
+  [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:queue usingBlock:^(NSNotification *note) {
+    [self.timer invalidate];
+    self.timer = nil;
+  }];
+  
+  // When the application re-enters the foreground, restart the update timer.
+  [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:queue usingBlock:^(NSNotification *note) {
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
+  }];
+```
+
 ## Page 26: Mouse actions to connect an outlet
 
 The paragraph beneath the heading "Connecting an interface element to the code" gives an incorrect description of the mouse actions. The following text is corrected:

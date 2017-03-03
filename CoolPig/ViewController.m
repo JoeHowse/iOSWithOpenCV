@@ -113,7 +113,7 @@
         self.timer = nil;
     }];
     
-    // When the application re-enters the foreground, re-start the update timer.
+    // When the application re-enters the foreground, restart the update timer.
     [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:queue usingBlock:^(NSNotification *note) {
         self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
     }];

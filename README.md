@@ -2,6 +2,12 @@
 
 These are the projects for my book, [iOS Application Development with OpenCV 3](https://www.packtpub.com/application-development/ios-application-development-opencv). For full details, please read the book along with the [Errata and Updates](ERRATA.md) page.
 
+---
+
+*&#9758; **I am using OpenCV 3** throughout the book and this repository. Even in OpenCV 3, the name `opencv2` still appears in header paths and in the filename `opencv2.framework`. Here, `opencv2` does not refer to the version number; it refers to the newer C++ API as opposed to the older C API.*
+
+---
+
 ## Getting started
 
 1. Set up an iOS development environment and OpenCV, as described in Chapter 1. If you run into difficulties in the section "Building the framework from source with extra modules", you may want to [download my build of `opencv2.framework`](https://github.com/JoeHowse/iOSWithOpenCV/releases/download/1.1.0/opencv2.framework.zip), which includes the `opencv_contrib` modules.

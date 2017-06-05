@@ -10,7 +10,7 @@ These are the projects for my book, [iOS Application Development with OpenCV 3](
 
 ## Getting started
 
-1. Set up an iOS development environment and OpenCV, as described in Chapter 1. If you run into difficulties in the section "Building the framework from source with extra modules", you may want to [download my build of `opencv2.framework`](https://github.com/JoeHowse/iOSWithOpenCV/releases/download/1.1.0/opencv2.framework.zip), which includes the `opencv_contrib` modules.
+1. Set up an iOS development environment and OpenCV, as described in Chapter 1. If you run into difficulties in the section "Building the framework from source with extra modules", you may want to [download my build of `opencv2.framework`](https://github.com/JoeHowse/iOSWithOpenCV/releases/download/1.1.0/opencv2.framework.zip), which includes the `opencv_contrib` modules. Alternatively, some readers report that they are successfully using the [CocoaPods](https://cocoapods.org) dependency manager to obtain compatible pre-packaged builds of OpenCV (with or without the `opencv_contrib` modules).
 2. Check out the repository to any path, which we will refer to as `<iOSWithOpenCV_path>`:
 
         $ git clone https://github.com/JoeHowse/iOSWithOpenCV.git <iOSWithOpenCV_path>
